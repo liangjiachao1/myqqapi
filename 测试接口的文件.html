@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.staticfile.org/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+  <input type="text" class="text">
+  <input type="text" class="text2">
+  <input type="text" class="text3">
+  <button>发送</button>
+  <div></div>
+
+  <script>
+        const input = document.querySelector('.text')
+        const text2 = document.querySelector('.text2') 
+        const text3 = document.querySelector('.text3')
+        const button = document.querySelector('button')
+        const div = document.querySelector('div')
+       //创建WebSocket实例
+       const socket = new WebSocket("ws://127.0.0.1:8001")
+        
+        //监听服务是否链接
+        socket.addEventListener('open',()=>{
+            div.innerHTML = "服务链接成功"
+        })
+        //button触发点击事件，将input框中的内容发送至websocket
+        //查看websocket是否接收到数据：chrome F12打开控制台》Network》WS》echo.websocket.org》messages
+        button.addEventListener('click',()=>{
+            const value = {
+              value:input.value,
+              id:+text2.value,
+              friendid:+text3.value
+            }
+            socket.send(JSON.stringify(value))
+        })
+        // 将接收到的数据插入到div中
+        socket.addEventListener('message',(e1)=>{
+            const e = JSON.parse(e1.data)
+            console.log(e)
+            div.innerHTML += e
+        })
+  </script>
+</body>
+</html>
